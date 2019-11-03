@@ -1,0 +1,67 @@
+.wjs_header {
+  height: 50px;
+  line-height: 50px;
+  border-bottom: 1px solid #ccc;
+}
+.wjs_header .container {
+  height: 50px;
+}
+.wjs_header .container .row {
+  height: 50px;
+  text-align: center;
+}
+.wjs_header .container .row div:nth-of-type(-n+3) {
+  height: 50px;
+  border-right: 1px solid #ccc;
+}
+.wjs_header .container .row > div:first-of-type a {
+  display: block;
+  position: relative;
+  z-index: 9999;
+}
+.wjs_header .container .row > div:first-of-type a:hover > img {
+  display: block;
+}
+.wjs_header .container .row > div:first-of-type a img {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 49px;
+  z-index: -1;
+  transform: translateX(-50%);
+  border: 1px solid #ccc;
+}
+.wjs_nav {
+  background-color: #fff;
+}
+.wjs_nav .navbar-brand {
+  height: 80px;
+  line-height: 50px;
+  font-size: 40px;
+}
+.wjs_nav .navbar-brand > span:first-of-type {
+  color: red;
+}
+.wjs_nav .navbar-brand > span:last-of-type {
+  color: #000;
+}
+.wjs_nav .navbar-nav li a {
+  line-height: 50px;
+}
+.wjs_nav .navbar-nav li a:hover,
+.wjs_nav .navbar-nav li a:focus {
+  background-color: #fff;
+  border-bottom: 2px solid red;
+}
+.wjs_nav .navbar-nav > .active > a {
+  background-color: #fff;
+  border-bottom: 2px solid red;
+}
+.wjs_nav .navbar-nav > .active > a:hover,
+.wjs_nav .navbar-nav > .active > a:focus {
+  background-color: #fff;
+  border-bottom: 2px solid red;
+}
+.wjs_nav .navbar-toggle {
+  margin-top: 23px;
+}

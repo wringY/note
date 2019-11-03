@@ -1,0 +1,12 @@
+.box p a {
+  color: red;
+}
+.box p a::before {
+  content: "";
+}
+.box p a > ul {
+  color: wheat;
+}
+.box p a > ul::after {
+  content: "";
+}

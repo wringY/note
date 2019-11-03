@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/base.css">
+    <style> 
+/* 如果设置全屏页面，首先给html、body设置宽高100% */
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+.ct_layout {
+    width: 100%;
+    height: 100%;
+}
+.ct_layout_tit {
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    background-color:red;
+}   
+.ct_layout_content {
+    width: 100%;
+    height: 100%;
+    padding-top: 50px;
+
+}  
+ /*定位是参照父元素的宽高，而我们希望.ct_layout_content_left的高是参照父元素内容的高度  */
+.ct_layout_content_left {
+    overflow: hidden;
+    float: left;
+    width: 100px;
+    /* 没有定位，高度100%不会超过父容器的padding */
+    height: 100%;
+    background-color: #ccc;
+    position: relative;
+}
+.ct_layout_content_right {
+    /* 使用margin-left 100px,给左侧元素保留位置，同时自己的宽度不要设置，让系统自动计算 */
+   
+    margin-left: 100px;
+    height: 100%;
+    background-color: orange;
+}
+.ct_layout_content_left ul {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+.ct_layout_content_left ul li {
+    width: 100%;
+    height: 50px;
+    border-right: 1px solid #666;
+    border-bottom: 1px solid #666;
+}
+.ct_layout_content_left ul li.current a {
+    color: red;
+    background-color: #fff;
+}
+.ct_layout_content_left ul li  a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    line-height: 50px;
+    text-align: center;
+    color: #000;
+}
+    </style>
+</head>
+<body>
+    <div class="ct_layout">
+        <div class="ct_layout_tit"></div>
+        <div class="ct_layout_content">
+            <div class="ct_layout_content_left">
+                <ul>
+                    <li class=""><a href="javascript:;">热门推荐</a></li>
+                    <li class="current"><a href="javascript:;">潮流女装</a></li>
+                    <li class=""><a href="javascript:;">品牌男装</a></li>
+                    <li class=""><a href="javascript:;">内衣配饰</a></li>
+                    <li class=""><a href="javascript:;">家用电器</a></li>
+                    <li class=""><a href="javascript:;">电脑办公</a></li>
+                    <li class=""><a href="javascript:;">手机数码</a></li>
+                    <li class=""><a href="javascript:;">母婴频道</a></li>
+                    <li class=""><a href="javascript:;">图书</a></li>
+                    <li class=""><a href="javascript:;">家居家纺</a></li>
+                    <li class=""><a href="javascript:;">居家生活</a></li>
+                    <li class=""><a href="javascript:;">家具建材</a></li>
+                    <li class=""><a href="javascript:;">热门推荐</a></li>
+                    <li class=""><a href="javascript:;">潮流女装</a></li>
+                    <li class=""><a href="javascript:;">品牌男装</a></li>
+                    <li class=""><a href="javascript:;">内衣配饰</a></li>
+                    <li class=""><a href="javascript:;">家用电器</a></li>
+                    <li class=""><a href="javascript:;">电脑办公</a></li>
+                    <li class=""><a href="javascript:;">手机数码</a></li>
+                    <li class=""><a href="javascript:;">母婴频道</a></li>
+                    <li class=""><a href="javascript:;">图书</a></li>
+                    <li class=""><a href="javascript:;">家居家纺</a></li>
+                    <li class=""><a href="javascript:;">居家生活</a></li>
+                    <li class=""><a href="javascript:;">家具建材</a></li>
+                </ul>
+            </div>
+            <div class="ct_layout_content_right"></div>
+        </div>
+    </div>
+    <script src="./js/common.js"></script>
+    <script src="./js/fastclick.js"></script>
+    <script>
+    // 首先给ul添加定位
+    var left = document.querySelector(".ct_layout_content_left");
+    var ulBox = document.querySelector(".ct_layout_content_left").querySelector("ul:first-of-type");
+    // 声明纪录位置的变量
+    var startY,moveY,distanceY;
+    var currentY = 0;
+// 声明最大静止区间和最小静止区间，是为了当触摸结束时，是ul的滑动的距离不要让父元素显示空白。
+    var maxTop = 0;
+    var minTop = left.offsetHeight - ulBox.offsetHeight;
+    // 最大滑动区间，比静止区间多一点即可（100px）
+    var maxBounceTop = maxTop+100;
+    var minBounceTop = minTop -100;  
+
+    ulBox.addEventListener("touchstart", function(e){
+        startY = e.targetTouches[0].clientY;
+    },{passive:true});
+
+    ulBox.addEventListener("touchmove", function(e){
+        // 清除有可能的过渡效果
+        ulBox.style.transition = "none";
+        // 如果超出滑动区间，退出函数
+        moveY = e.targetTouches[0].clientY;
+        distanceY = moveY -startY;
+        if(currentY +distanceY > maxBounceTop || currentY + distanceY < minBounceTop){
+            console.log("out");
+            return;      
+        }
+        // 这里ul的移动需要根据上次移动后的基础上移动,原生的js无法获取定位的top值。
+        ulBox.style.top =  (currentY +distanceY) +"px";
+    },{passive:true});
+
+    ulBox.addEventListener("touchend", function(e){
+        // 纪录上次移动移动的距离,通过累计的方式叠加，然后ul在移动的时候，在这个基础上进行移动。
+        currentY += distanceY;
+        //触摸结束后，回到静态区间范围。
+        if(currentY + distanceY > maxTop){
+        // 以过渡的形式，回到静态取决
+        ulBox.style.transition = "top 0.5s ease";
+        ulBox.style.top = maxTop;
+        // 同时更新currentY
+        currentY = maxTop;
+        }else if(currentY + distanceY < minTop){
+          console.log(minTop);
+        ulBox.style.transition = "top 0.5s ease";
+        ulBox.style.top = minTop+"px";
+        // 同时更新currentY
+        currentY = minTop; 
+        }
+    },{passive:true});
+var coumputuStyle = window.getComputedStyle(ulBox,null);
+console.log(coumputuStyle);
+
+var topX = coumputuStyle.top;
+// 把字符串转换为数组
+topX =  topX.split("");
+// console.log(topX);
+// var topX = topX.fliter(function(items,index,Array){
+//     if(!typeof items === Number){
+//         return items;
+//     }
+// });
+ var lis = ulBox.children;
+// itcast.tap(ulBox,function(e){
+// for (var i = 0; i < lis.length; i++){
+//     lis[i].classList.remove("current");
+// }
+// e.target.parentNode.classList.add("current");
+// });
+// 初始化js
+if ('addEventListener' in document) {
+	document.addEventListener('DOMContentLoaded', function() {
+		FastClick.attach(document.body);
+	}, false);
+}
+ulBox.addEventListener("click", function(e){
+    for (var i = 0; i < lis.length; i++){
+    lis[i].classList.remove("current");
+}
+e.target.parentNode.classList.add("current");
+});
+    
+    </script>
+</body>
+</html>

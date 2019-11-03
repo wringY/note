@@ -1,0 +1,17 @@
+@hhh:red;
+.box {
+    p {
+        a {
+           color: red;
+           &::before {
+               content: "";
+           } 
+           >ul {
+               color: wheat;
+              &::after {
+                  content: "";
+              } 
+           }
+        }
+    }
+}

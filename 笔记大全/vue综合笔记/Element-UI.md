@@ -1,0 +1,24 @@
+##  Element-UI
+
+- Element-UI：一套为开发者、设计师和产品经理准备的基于 Vue 2.0 的桌面端组件库。官网地址为： http://element-cn.eleme.io/#/zh-CN
+- Element-UI，可以让我们不在过度的关注于样式，因为提供了一些标准的组件，有一些漂亮的样式。这样就可以让我们从繁琐、工作量大、工作难度低的样式编写中解放出来。
+- 基于命令行方式手动安装
+  - 安装依赖包 npm i element-ui –S
+  - 导入 Element-UI 相关资源
+
+~~~
+/ 导入组件库
+  import ElementUI from 'element-ui';
+  // 导入组件相关样式
+  import 'element-ui/lib/theme-chalk/index.css';
+  // 配置 Vue 插件
+  Vue.use(ElementUI);
+~~~
+
+- 基于图形化界面自动安装
+
+1. 运行 vue ui 命令，打开图形化界面
+2. 通过 Vue 项目管理器，进入具体的项目配置面板
+3. 点击 插件 -> 添加插件，进入插件查询面板
+4. 搜索 vue-cli-plugin-element 并安装
+5. 配置插件，实现按需导入，从而减少打包后项目的体积
