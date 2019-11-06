@@ -535,6 +535,79 @@ tom.id = 89757;
 
   第二处是在给 `tom.id` 赋值的时候，由于它是只读属性，所以报错了。
 
+### 函数类型的接口
+
+- 接口能够描述JavaScript中对象拥有的各种各样的外形。 除了描述带有属性的普通对象外，接口也可以描述函数类型。
+- 为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 它就像是一个只有参数列表和返回值类型的函数定义。参数列表里的每个参数都需要名字和类型。
+
+~~~typescript
+interface SearchFunc {
+    (source: string, subString: string): boolean;
+  }
+  let mySearch: SearchFunc;
+mySearch = function(source: string, subString: string) {
+  let result = source.search(subString);
+  return result > -1;
+}
+~~~
+
+- 对于函数类型的类型检查来说，函数的参数名不需要与接口里定义的名字相匹配。 比如，我们使用下面的代码重写上面的例子：
+
+  ```typescript
+  let mySearch: SearchFunc;
+  mySearch = function(src: string, sub: string): boolean {
+    let result = src.search(sub);
+    return result > -1;
+  }
+  ```
+
+### 类的接口
+
+- TypeScript也能够用它来明确的强制一个类去符合某种契约
+
+~~~typescript
+interface ClockInterface {
+    currentTime: Date;
+    setTime(d: Date);
+}
+
+class Clock implements ClockInterface {
+    currentTime: Date;
+    setTime(d: Date) {
+        this.currentTime = d;
+    }
+    constructor(h: number, m: number) { }
+}
+~~~
+
+- 接口描述了类的公共部分，而不是公共和私有两部分。 它不会帮你检查类是否具有某些私有成员。
+
+### 继承接口
+
+- 和类一样，接口也可以相互继承。 这让我们能够从一个接口里复制成员到另一个接口里，可以更灵活地将接口分割到可重用的模块里。
+- 一个接口可以继承多个接口，创建出多个接口的合成接口。
+
+~~~
+interface Shape {
+    color: string;
+}
+
+interface PenStroke {
+    penWidth: number;
+}
+
+interface Square extends Shape, PenStroke {
+    sideLength: number;
+}
+
+let square = <Square>{};
+square.color = "blue";
+square.sideLength = 10;
+square.penWidth = 5.0;
+~~~
+
+
+
 ## 数组的类型
 
 - 在 TypeScript 中，数组类型有多种定义方式，比较灵活。
@@ -654,6 +727,173 @@ let mySum: (x: number, y: number) => number = function (x: number, y: number): n
 - 注意不要混淆了 TypeScript 中的 `=>` 和 ES6 中的 `=>`。
 - 在 TypeScript 的类型定义中，`=>` 用来表示函数的定义，左边是输入类型，需要用括号括起来，右边是输出类型。
 - 在 ES6 中，`=>` 叫做箭头函数，应用十分广泛
+
+### 可选参数和默认参数
+
+~~~
+function buildName(firstName: string, lastName?: string) {
+    return firstName + " " + lastName;
+}
+~~~
+
+- 可选参数必须跟在必须参数后面。 如果上例我们想让first name是可选的，那么就必须调整它们的位置，把first name放在后面。
+  在TypeScript里，我们也可以为参数提供一个默认值当用户没有传递这个参数或传递的值是undefined时。 它们叫做有默认初始化值的参数。 让我们修改上例，把last name的默认值设置为"Smith"
+
+~~~
+function buildName(firstName: string, lastName = "Smith") {
+    return firstName + " " + lastName;
+}
+~~~
+
+- 在所有必须参数后面的带默认初始化的参数都是可选的，与可选参数一样，在**调用函数**的时候可以省略
+- 也就是说可选参数与末尾的默认参数共享参数类型。
+
+~~~
+function buildName(firstName: string, lastName?: string) {
+    // ...
+}
+和
+function buildName(firstName: string, lastName = "Smith") {
+    // ...
+}
+共享同样的类型(firstName: string, lastName?: string) => string。 默认参数的默认值消失了，只保留了它是一个可选参数的信息。
+~~~
+
+## 泛型
+
+- 在像C#和Java这样的语言中，可以使用`泛型`来创建可重用的组件，一个组件可以支持多种类型的数据。 这样用户就可以以自己的数据类型来使用组件。
+- 泛型指任意类型，如果使用泛型变量需要进行约束
+- 不使用泛型
+
+~~~
+function identity(arg: number): number {
+    return arg;
+}
+或者，我们使用any类型来定义函数：
+function identity(arg: any): any {
+    return arg;
+}
+~~~
+
+### 使用泛型
+
+~~~
+因此，我们需要一种方法使返回值的类型与传入参数的类型是相同的。 这里，我们使用了 类型变量，它是一种特殊的变量，只用于表示类型而不是值。
+function identity<T>(arg: T): T {
+    return arg;
+}
+~~~
+
+我们给identity添加了类型变量`T`。 `T`帮助我们捕获用户传入的类型（比如：`number`），之后我们就可以使用这个类型。 之后我们再次使用了 `T`当做返回值类型。现在我们可以知道参数类型与返回值类型是相同的了。 这允许我们跟踪函数里使用的类型的信息。
+
+- 我们把这个版本的`identity`函数叫做泛型，因为它可以适用于多个类型。 不同于使用 `any`，它不会丢失信息，像第一个例子那像保持准确性，传入数值类型并返回数值类型。
+
+~~~
+function identity<T>(arg: T): T {
+    return arg;
+}
+let output = identity<string>("myString"); 
+----第二种方法更普遍。利用了类型推论 -- 即编译器会根据传入的参数自动地帮助我们确定T的类型：
+let output = identity("myString");  // type of output will be 'string'
+~~~
+
+### 使用泛型变量
+
+- 使用泛型创建像`identity`这样的泛型函数时，编译器要求你在函数体必须正确的使用这个通用的类型。 换句话说，你必须把这些参数当做是任意或所有类型。
+
+~~~
+如果我们想同时打印出arg的长度。 我们很可能会这样做：
+function loggingIdentity<T>(arg: T): T {
+    console.log(arg.length);  // Error: T doesn't have .length
+    return arg;
+}
+~~~
+
+- 如果这么做，编译器会报错说我们使用了arg的.length属性，但是没有地方指明arg具有这个属性。 记住，这些类型变量代表的是任意类型，所以使用这个函数的人可能传入的是个数字，而数字是没有 .length属性的。
+
+  现在假设我们想操作T类型的数组而不直接是T。由于我们操作的是数组，所以.length属性是应该存在的。 我们可以像创建其它数组一样创建这个数组：
+
+~~~
+function loggingIdentity<T>(arg: T[]): T[] {
+    console.log(arg.length);  // Array has a .length, so no more error
+    return arg;
+}
+你可以这样理解loggingIdentity的类型：泛型函数loggingIdentity，接收类型参数T和参数arg，它是个元素类型是T的数组，并返回元素类型是T的数组。 如果我们传入数字数组，将返回一个数字数组，因为此时 T的的类型为number。 这可以让我们把泛型变量T当做类型的一部分使用，而不是整个类型，增加了灵活性。
+~~~
+
+- 我们也可以这样实现上面的例子：
+
+~~~
+function loggingIdentity<T>(arg: Array<T>): Array<T> {
+    console.log(arg.length);  // Array has a .length, so no more error
+    return arg;
+}
+~~~
+
+### 泛型函数的类型
+
+- 泛型函数的类型与非泛型函数的类型没什么不同，只是有一个类型参数在最前面，像函数声明一样：
+
+~~~
+function identity<T>(arg: T): T {
+    return arg;
+}
+// ts里面 => 左边输入 右边输出
+let myIdentity: <T>(arg: T) => T = identity;
+~~~
+
+- 我们也可以使用不同的泛型参数名，只要在数量上和使用方式上能对应上就可以。
+
+~~~
+function identity<T>(arg: T): T {
+    return arg;
+}
+
+let myIdentity: <U>(arg: U) => U = identity;
+~~~
+
+### 泛型接口
+
+~~~
+interface GenericIdentityFn {
+    <T>(arg: T): T;
+}
+
+function identity<T>(arg: T): T {
+    return arg;
+}
+
+let myIdentity: GenericIdentityFn = identity;
+~~~
+
+### 泛型类
+
+- 泛型类看上去与泛型接口差不多。 泛型类使用（ `<>`）括起泛型类型，跟在类名后面。
+
+~~~
+class GenericNumber<T> {
+    zeroValue: T;
+    add: (x: T, y: T) => T;
+}
+
+let myGenericNumber = new GenericNumber<number>();
+myGenericNumber.zeroValue = 0;
+myGenericNumber.add = function(x, y) { return x + y; };
+~~~
+
+- `GenericNumber`类的使用是十分直观的，并且你可能已经注意到了，没有什么去限制它只能使用`number`类型。 也可以使用字符串或其它更复杂的类型。
+
+~~~
+let stringNumeric = new GenericNumber<string>();
+stringNumeric.zeroValue = "";
+stringNumeric.add = function(x, y) { return x + y; };
+
+console.log(stringNumeric.add(stringNumeric.zeroValue, "test"));
+~~~
+
+- 与接口一样，直接把泛型类型放在类后面，可以帮助我们确认类的所有属性都在使用相同的类型。
+
+  我们在[类](https://www.tslang.cn/docs/handbook/classes.html)那节说过，类有两部分：静态部分和实例部分。 泛型类指的是实例部分的类型，所以类的静态属性不能使用这个泛型类型。
 
 ## 类型断言
 
