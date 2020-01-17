@@ -21,6 +21,7 @@
     - 以管理员身份运行install.cmd 打开CMD窗口，直接回车生成一个配置文件settings.txt
     - 把配置文件存到当前目录中
     - 修改配置文件内容把root 设置为nvm文件夹的路径，把path改为nodejs文件夹的路径
+    - 设置setting文件是为了防止外网网速过慢的情况
   - 配置nvm和node.js环境变量 在CMD中打开sysdm.cpl
     - 配置变量名为NVM_HOME，变量值为C:\dev\nvm   	nvm文件夹路径
     - 配置变量名为NVM_SYMLINK，变量值为C:\dev\nodejs  nodejs文件夹路径
