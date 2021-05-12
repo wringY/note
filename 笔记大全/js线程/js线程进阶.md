@@ -154,3 +154,5 @@ setTimeout(function(){
 ```
 console.log("setTimeout");
 ```
+## js引擎与渲染GUI引擎如何调配
+- js引擎宏任务--->微任务--->渲染页面--->宏任务。。。。 以此重复
