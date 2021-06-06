@@ -1,0 +1,7 @@
+createElement -> componentWillMount -> render -> 生成 html -> innerHTML 填充 -> componentDidMount
+
+props 变更 -> componentWillReceiveProps -> shouldComponentUpdate -> render -> diff(内部) -> change dom
+
+setState -> shouldComponentUpdate -> render -> diff(内部) -> change dom
+
+forceUpdate -> render -> diff(内部) -> change dom
