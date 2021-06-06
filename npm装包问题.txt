@@ -1,3 +1,0 @@
- --rm 权限问题
-
-rm -rf node_modules 删除包
